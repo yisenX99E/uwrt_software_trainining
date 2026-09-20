@@ -10,7 +10,7 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <software_training/visibility.h>
-#include <turtlesim/srv/spawn.hpp>
+#include <turtlesim_msgs/srv/spawn.hpp>
 
 namespace composition {
 
@@ -21,7 +21,7 @@ public:
   explicit spawn_turtle_nodelet(const rclcpp::NodeOptions &options);
 
 private:
-  rclcpp::Client<turtlesim::srv::Spawn>::SharedPtr client;
+  rclcpp::Client<turtlesim_msgs::srv::Spawn>::SharedPtr client;
   rclcpp::TimerBase::SharedPtr timer;
 
   SOFTWARE_TRAINING_LOCAL
@@ -36,8 +36,8 @@ private:
   } turtle_info;
 
   std::vector<std::string> turtle_names{"stationary_turtle", "moving_turtle"};
-  std::vector<turtle_info> turtle_bio{{.x_pos = 5, .y_pos = 5, .rad = 0},
-                                      {.x_pos = 25, .y_pos = 10, .rad = 0}};
+  std::vector<turtle_info> turtle_bio{{5.0f, 5.0f, 0.0f},
+                                      {25.0f, 10.0f, 0.0f}};
 
   // map of turtle name to turtle information
   std::map<std::string, turtle_info> turtle_description;

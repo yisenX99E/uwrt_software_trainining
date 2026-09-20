@@ -3,13 +3,10 @@
 
 #include <cstdlib>
 #include <memory>
-#include <string>
-#include <vector>
-
 #include <rclcpp/rclcpp.hpp>
 
 #include <software_training/visibility.h>
-#include <turtlesim/srv/kill.hpp>
+#include <std_srvs/srv/empty.hpp>
 
 namespace composition {
 
@@ -19,15 +16,11 @@ public:
   explicit turtle_service_request_node(const rclcpp::NodeOptions &options);
 
 private:
-  rclcpp::Client<turtlesim::srv::Kill>::SharedPtr client;
+  rclcpp::Client<std_srvs::srv::Empty>::SharedPtr client;
   rclcpp::TimerBase::SharedPtr timer;
 
-  // all the turtles
-  std::vector<std::string> turtle_names = {"turtle1", "moving_turtle",
-                                           "stationary_turtle"};
-
   SOFTWARE_TRAINING_LOCAL
-  void kill();
+  void reset_simulator();
 };
 
 } // namespace composition

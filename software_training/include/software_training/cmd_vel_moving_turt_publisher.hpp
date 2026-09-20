@@ -29,23 +29,8 @@ private:
   // set quality of service depth - AKA a backlog
   static constexpr unsigned int QUEUE{10};
 
-  // namespace for values
-  typedef struct point {
-
-    typedef struct linear {
-      static constexpr float x = 12;
-      static constexpr float y = 12;
-      static constexpr float z = 12;
-    } linear;
-
-    typedef struct angular {
-      static constexpr float x = 1.41;
-      static constexpr float y = 1.41;
-      static constexpr float z = 1.41;
-
-    } angular;
-
-  } coordinates;
+  static constexpr double LINEAR_SPEED{2.0};
+  static constexpr double ANGULAR_SPEED{1.0};
 };
 
 } // namespace composition

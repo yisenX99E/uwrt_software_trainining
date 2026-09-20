@@ -1,6 +1,7 @@
 #ifndef MOVING_TURTLE_ACTION_SERVER_HPP_
 #define MOVING_TURTLE_ACTION_SERVER_HPP_
 
+#include <atomic>
 #include <chrono>
 #include <functional>
 #include <memory>
@@ -13,7 +14,7 @@
 #include <software_training/visibility.h>
 
 #include <geometry_msgs/msg/twist.hpp> // cmd_vel publisher message
-#include <turtlesim/msg/pose.hpp> // header for message to get moving turt position
+#include <turtlesim_msgs/msg/pose.hpp> // header for message to get moving turt position
 
 namespace composition{
 
@@ -36,7 +37,7 @@ private:
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr publisher;
 
   // subscriber to get moving turt posiiton
-  rclcpp::Subscription<turtlesim::msg::Pose>::SharedPtr subscriber;
+  rclcpp::Subscription<turtlesim_msgs::msg::Pose>::SharedPtr subscriber;
 
   // goal callback function
   SOFTWARE_TRAINING_LOCAL
@@ -57,16 +58,15 @@ private:
   // executioner callback function
   void execute(const std::shared_ptr<GoalHandleActionServer> goal_handle);
 
-  // for subscriber
-  static float x;
-  static float y;
-  static float theta;
-  static float linear_velocity;
-  static float angular_velocity;
+  std::atomic<float> x{0.0f};
+  std::atomic<float> y{0.0f};
+  std::atomic<float> theta{0.0f};
+  std::atomic<bool> pose_received{false};
+  std::atomic<bool> goal_active{false};
 
   static constexpr unsigned int QUEUE{10};
 };
 
-}
+} // namespace composition
 
 #endif // MOVING_TURTLE_ACTION_SERVER_HPP_

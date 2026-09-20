@@ -9,7 +9,7 @@ spawn_turtle_nodelet::spawn_turtle_nodelet(const rclcpp::NodeOptions &options)
     : Node("spawn_turtle_nodelet", options) {
 
   // create client that makes a requets to '/spawn' service
-  client = this->create_client<turtlesim::srv::Spawn>("/spawn");
+  client = this->create_client<turtlesim_msgs::srv::Spawn>("/spawn");
 
   // create client callback
   timer = this->create_wall_timer(
@@ -36,8 +36,8 @@ void spawn_turtle_nodelet::spawn_turtle() {
   for (const std::string &name : turtle_names) {
 
     // create request
-    std::unique_ptr<turtlesim::srv::Spawn::Request> request =
-        std::make_unique<turtlesim::srv::Spawn::Request>();
+    std::unique_ptr<turtlesim_msgs::srv::Spawn::Request> request =
+        std::make_unique<turtlesim_msgs::srv::Spawn::Request>();
 
     // fill in repsonse
     request->name = name;
@@ -47,16 +47,24 @@ void spawn_turtle_nodelet::spawn_turtle() {
 
     // create a callback to call client and because no 'spin()' is available
     auto callback =
-        [this](rclcpp::Client<turtlesim::srv::Spawn>::SharedFuture response)
+        [this](rclcpp::Client<turtlesim_msgs::srv::Spawn>::SharedFuture response)
         -> void {
-      RCLCPP_INFO(this->get_logger(), "Turtle Created: %s",
-                  response.get()->name.c_str());
-      rclcpp::shutdown();
+      try {
+        RCLCPP_INFO(this->get_logger(), "Turtle Created: %s",
+                    response.get()->name.c_str());
+      } catch (const std::exception &error) {
+        RCLCPP_ERROR(this->get_logger(), "Could not spawn turtle: %s",
+                     error.what());
+      }
     };
 
     // send request
     auto result = client->async_send_request(std::move(request), callback);
+    (void)result;
   }
+
+
+  timer->cancel();
 }
 
 } // namespace composition

@@ -7,7 +7,7 @@
 
 #include <software_training/msg/software.hpp>
 #include <software_training/visibility.h>
-#include <turtlesim/msg/pose.hpp>
+#include <turtlesim_msgs/msg/pose.hpp>
 
 namespace composition {
 
@@ -18,8 +18,8 @@ public:
 
 private:
   // position subscribers
-  rclcpp::Subscription<turtlesim::msg::Pose>::SharedPtr stationary_turt_sub;
-  rclcpp::Subscription<turtlesim::msg::Pose>::SharedPtr moving_turt_sub;
+  rclcpp::Subscription<turtlesim_msgs::msg::Pose>::SharedPtr stationary_turt_sub;
+  rclcpp::Subscription<turtlesim_msgs::msg::Pose>::SharedPtr moving_turt_sub;
 
   // turtle publisher with custom message
   rclcpp::Publisher<software_training::msg::Software>::SharedPtr publisher;
@@ -30,13 +30,14 @@ private:
   // callback groups - really just threads to run callbacks
   rclcpp::CallbackGroup::SharedPtr callbacks;
 
-  float x_stationary_turt;
-  float y_stationary_turt;
+  float x_stationary_turt{0.0f};
+  float y_stationary_turt{0.0f};
 
-  float x_moving_turt;
-  float y_moving_turt;
+  float x_moving_turt{0.0f};
+  float y_moving_turt{0.0f};
 
-  float total_distance;
+  bool stationary_pose_received{false};
+  bool moving_pose_received{false};
 
   static const unsigned int QUEUE{10};
 };

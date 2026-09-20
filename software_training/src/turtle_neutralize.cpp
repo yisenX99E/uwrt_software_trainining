@@ -8,14 +8,14 @@ turtle_service_request_node::turtle_service_request_node(
     const rclcpp::NodeOptions &options)
     : Node("turtle_service_request_node", options) {
   // create client
-  client = this->create_client<turtlesim::srv::Kill>("/kill");
+  client = this->create_client<std_srvs::srv::Empty>("/reset");
 
   // create callback
   timer = this->create_wall_timer(
-      2s, std::bind(&turtle_service_request_node::kill, this));
+      500ms, std::bind(&turtle_service_request_node::reset_simulator, this));
 }
 
-void turtle_service_request_node::kill() {
+void turtle_service_request_node::reset_simulator() {
 
   // check if service exists
   if (!client->wait_for_service(2s)) {
@@ -28,23 +28,19 @@ void turtle_service_request_node::kill() {
     return;
   }
 
-  for (std::string &name : turtle_names) {
-    auto request = std::make_shared<turtlesim::srv::Kill::Request>();
-    request->name = name;
+  auto request = std::make_shared<std_srvs::srv::Empty::Request>();
+  auto callback =
+      [this](rclcpp::Client<std_srvs::srv::Empty>::SharedFuture response) {
+    (void)response;
+    RCLCPP_INFO(this->get_logger(),
+                "Simulator cleared and turtle1 restored");
+  };
+  auto result = client->async_send_request(request, callback);
+  (void)result;
 
-    // create callback to handle response because no 'spin()' is available
-
-    auto callback =
-        [this](rclcpp::Client<turtlesim::srv::Kill>::SharedFuture response)
-        -> void {
-      (void)response;
-      RCLCPP_INFO(this->get_logger(), "Turtle Killed");
-      rclcpp::shutdown(); // need this or else will keep on executing callback -
-                          // only want to execute once!
-    };
-
-    auto result = client->async_send_request(request, callback);
-  }
+  // This setup operation is intentionally one-shot. Shutting down rclcpp here
+  // would terminate every component in the shared container.
+  timer->cancel();
 }
 
 } // namespace composition

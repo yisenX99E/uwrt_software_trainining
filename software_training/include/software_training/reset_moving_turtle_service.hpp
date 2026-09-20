@@ -9,7 +9,7 @@
 
 #include <software_training/srv/software.hpp>
 #include <software_training/visibility.h>
-#include <turtlesim/srv/teleport_absolute.hpp>
+#include <turtlesim_msgs/srv/teleport_absolute.hpp>
 
 namespace composition {
 
@@ -24,7 +24,9 @@ private:
   rclcpp::Service<software_training::srv::Software>::SharedPtr service;
 
   // create client
-  rclcpp::Client<turtlesim::srv::TeleportAbsolute>::SharedPtr client;
+  rclcpp::Client<turtlesim_msgs::srv::TeleportAbsolute>::SharedPtr client;
+  rclcpp::CallbackGroup::SharedPtr client_callbacks;
+  rclcpp::CallbackGroup::SharedPtr service_callbacks;
 
   // server callback
   SOFTWARE_TRAINING_LOCAL
@@ -33,8 +35,8 @@ private:
       std::shared_ptr<software_training::srv::Software::Response> response);
 
   typedef struct reset {
-    constexpr static float x = 5.44;
-    constexpr static float y = 5.44;
+    constexpr static float x = 25.0;
+    constexpr static float y = 10.0;
     constexpr static float theta = 0;
   } reset_coordinates;
 };

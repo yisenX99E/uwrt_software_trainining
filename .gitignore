@@ -1,1 +1,29 @@
-/software_training/launch/__pycache__/
+# ROS / colcon build artifacts
+**/build/
+**/install/
+**/log/
+
+# Python cache
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Editor / OS noise
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*~
+
+# Temporary / compiled artifacts
+*.o
+*.obj
+*.so
+*.a
+*.lib
+*.dll
+*.dylib
+*.exe
+compile_commands.json
+*.tmp
+*.bak

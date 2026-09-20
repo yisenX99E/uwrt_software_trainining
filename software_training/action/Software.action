@@ -1,16 +1,9 @@
-# Goal Request /moving_turtle/cmd_vel
-geometry_msgs/Vector3 linear_pos 
-geometry_msgs/Vector3 angular_pos
-
-# Result - time
+# Absolute waypoint for moving_turtle
+float32 x
+float32 y
 ---
-uint64 duration
- 
+# Time required to reach the waypoint
+builtin_interfaces/Duration duration
 ---
-# Feedback /moving_turtle/pose
-float32 x_pos 
-float32 y_pos
-float32 theta_pos
-
-
-
+# Remaining Euclidean distance to the waypoint
+float32 distance

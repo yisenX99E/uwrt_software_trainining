@@ -12,20 +12,25 @@ turtle_publisher::turtle_publisher(const rclcpp::NodeOptions &options)
 
   // callback for stationary turtle position
   auto stationary_turt_callback =
-      [this](const turtlesim::msg::Pose::SharedPtr msg) -> void {
+      [this](const turtlesim_msgs::msg::Pose::ConstSharedPtr msg) -> void {
     this->x_stationary_turt = msg->x;
     this->y_stationary_turt = msg->y;
+    this->stationary_pose_received = true;
   };
 
   // callback for moving turtle position
   auto moving_turt_callback =
-      [this](const turtlesim::msg::Pose::SharedPtr msg) -> void {
+      [this](const turtlesim_msgs::msg::Pose::ConstSharedPtr msg) -> void {
     this->x_moving_turt = msg->x;
     this->y_moving_turt = msg->y;
+    this->moving_pose_received = true;
   };
 
   // publisher callback
   auto publisher_callback = [this](void) -> void {
+    if (!stationary_pose_received || !moving_pose_received) {
+      return;
+    }
     // compute absolute difference in coordinates
     double position_x{abs(this->x_stationary_turt - this->x_moving_turt)};
     double position_y{abs(this->y_stationary_turt - this->y_moving_turt)};
@@ -68,12 +73,13 @@ turtle_publisher::turtle_publisher(const rclcpp::NodeOptions &options)
   callback_option.topic_stats_options.publish_topic = stat_name.c_str();
 
   // instantiate subscribers
-  stationary_turt_sub = this->create_subscription<turtlesim::msg::Pose>(
-      "/stationary_turtle/pose", QUEUE, stationary_turt_callback,
-      callback_option);
+  stationary_turt_sub = this->create_subscription<turtlesim_msgs::msg::Pose>(
+      "/stationary_turtle/pose", rclcpp::SensorDataQoS(),
+      stationary_turt_callback, callback_option);
 
-  moving_turt_sub = this->create_subscription<turtlesim::msg::Pose>(
-      "/moving_turtle/pose", QUEUE, moving_turt_callback, callback_option);
+  moving_turt_sub = this->create_subscription<turtlesim_msgs::msg::Pose>(
+      "/moving_turtle/pose", rclcpp::SensorDataQoS(), moving_turt_callback,
+      callback_option);
 
   // instantiate publisher
   publisher = this->create_publisher<software_training::msg::Software>(
